@@ -6,82 +6,80 @@
 /*   By: fdi-tria <fdi-tria@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 02:49:00 by fdi-tria          #+#    #+#             */
-/*   Updated: 2024/11/12 04:23:29 by fdi-tria         ###   ########.fr       */
+/*   Updated: 2024/11/12 05:27:39 by fdi-tria         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_handle_error(char *buf, char *s)
+void	ft_handle_error(t_buffer *buf)
 {
 	if (buf)
-		free(buf);
-	if (s)
-		free(s);
-	return (NULL);
+	{
+		if (buf->data)
+			free(buf->data);
+		buf->data = NULL;
+		buf->len = 0;
+		buf->capacity = 0;
+	}
 }
 
-size_t	ft_strlen(const char *s)
+int	ft_append_buffer(t_buffer *buf, char *data, size_t data_len)
 {
-	size_t	i;
+	char	*new_data;
+	size_t	new_capacity;
 
-	if (!s)
-		return (0);
+	if (buf->len + data_len + 1 > buf->capacity)
+	{
+		new_capacity = buf->capacity * 2 + data_len + 1;
+		new_data = malloc(new_capacity);
+		if (!new_data)
+			return (-1);
+		if (buf->data)
+		{
+			ft_memcpy(new_data, buf->data, buf->len);
+			free(buf->data);
+		}
+		buf->data = new_data;
+		buf->capacity = new_capacity;
+	}
+	ft_memcpy(buf->data + buf->len, data, data_len);
+	buf->len += data_len;
+	buf->data[buf->len] = '\0';
+	return (0);
+}
+
+void	*ft_memcpy(void *dst, const void *src, size_t n)
+{
+	size_t		i;
+	char		*d;
+	const char	*s;
+
+	if (!dst && !src)
+		return (NULL);
+	d = (char *)dst;
+	s = (const char *)src;
 	i = 0;
-	while (s[i])
+	while (i < n)
+	{
+		d[i] = s[i];
 		i++;
-	return (i);
+	}
+	return (dst);
 }
 
-char	*ft_strchr(const char *s, int c)
+void	*ft_memchr(const void *s, int c, size_t n)
 {
-	if (!s)
-		return (NULL);
-	while (*s)
+	size_t				i;
+	const unsigned char	*ptr;
+
+	ptr = (const unsigned char *)s;
+	i = 0;
+	while (i < n)
 	{
-		if (*s == (char)c)
-			return ((char *)s);
-		s++;
+		if (ptr[i] == (unsigned char)c)
+			return ((void *)(ptr + i));
+		i++;
 	}
-	if (*s == (char)c)
-		return ((char *)s);
 	return (NULL);
-}
-
-static char	*ft_join_check(char *s1, char *s2, char **str)
-{
-	if (!s1 || !s2)
-		return (NULL);
-	if (!s1[0] && !s2[0])
-	{
-		free(s1);
-		return (NULL);
-	}
-	*str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!*str)
-	{
-		free(s1);
-		return (NULL);
-	}
-	return (s1);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	char	*str;
-	size_t	i;
-	size_t	j;
-
-	s1 = ft_join_check(s1, s2, &str);
-	if (!s1)
-		return (NULL);
-	i = -1;
-	while (s1[++i])
-		str[i] = s1[i];
-	j = -1;
-	while (s2[++j])
-		str[i + j] = s2[j];
-	str[i + j] = '\0';
-	free(s1);
-	return (str);
 }
