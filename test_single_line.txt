@@ -1,0 +1,1 @@
+Ceci est une seule ligne sans retour à la ligne

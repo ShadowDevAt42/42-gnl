@@ -1,0 +1,7 @@
+Première ligne
+Deuxième ligne
+Troisième ligne avec des caractères spéciaux : é è à !
+Une très longue ligne qui dépasse probablement la taille du buffer pour tester le comportement de la fonction avec des lignes plus longues que BUFFER_SIZE........................................................................................................................................................................
+
+Ligne après une ligne vide
+Dernière ligne sans retour à la ligne
